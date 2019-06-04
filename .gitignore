@@ -3,3 +3,4 @@
 obj/*
 *.manifest
 *.exe.config
+*.suo
