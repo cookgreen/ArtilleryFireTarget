@@ -64,8 +64,7 @@ namespace BallisticSimulator
             
             for (int i = 0; i < be.Count; i++)
             {
-                PointF point = be[i].GetNextPos();
-                e.Graphics.DrawEllipse(Pens.Black, point.X, point.Y, 2, 2);
+                be[i].Draw(e.Graphics);
                 be[i].Update();
                 e.Graphics.Flush();
             }
