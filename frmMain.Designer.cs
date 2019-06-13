@@ -33,6 +33,8 @@
             this.rbRandomize = new System.Windows.Forms.RadioButton();
             this.rbFixedValue = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtInterval = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.txtDura = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtAmount = new System.Windows.Forms.TextBox();
@@ -42,7 +44,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtRandomizeAngleDown = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txtRandomizeSpeed = new System.Windows.Forms.TextBox();
+            this.txtRandomizeSpeedDown = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtRandomizeGravity = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -58,8 +60,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.canvas = new System.Windows.Forms.PictureBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.txtInterval = new System.Windows.Forms.TextBox();
+            this.txtRandomizeSpeedUp = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -127,6 +129,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.label13);
+            this.groupBox4.Controls.Add(this.txtRandomizeSpeedUp);
             this.groupBox4.Controls.Add(this.txtInterval);
             this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.txtDura);
@@ -138,7 +142,7 @@
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.txtRandomizeAngleDown);
             this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Controls.Add(this.txtRandomizeSpeed);
+            this.groupBox4.Controls.Add(this.txtRandomizeSpeedDown);
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.txtRandomizeGravity);
             this.groupBox4.Location = new System.Drawing.Point(6, 160);
@@ -146,6 +150,24 @@
             this.groupBox4.Size = new System.Drawing.Size(282, 220);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
+            // 
+            // txtInterval
+            // 
+            this.txtInterval.Enabled = false;
+            this.txtInterval.Location = new System.Drawing.Point(78, 182);
+            this.txtInterval.Name = "txtInterval";
+            this.txtInterval.Size = new System.Drawing.Size(198, 21);
+            this.txtInterval.TabIndex = 13;
+            this.txtInterval.Text = "10";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(10, 185);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(53, 12);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "Interval";
             // 
             // txtDura
             // 
@@ -228,14 +250,14 @@
             this.label7.TabIndex = 2;
             this.label7.Text = "Speed:";
             // 
-            // txtRandomizeSpeed
+            // txtRandomizeSpeedDown
             // 
-            this.txtRandomizeSpeed.Enabled = false;
-            this.txtRandomizeSpeed.Location = new System.Drawing.Point(78, 47);
-            this.txtRandomizeSpeed.Name = "txtRandomizeSpeed";
-            this.txtRandomizeSpeed.Size = new System.Drawing.Size(198, 21);
-            this.txtRandomizeSpeed.TabIndex = 3;
-            this.txtRandomizeSpeed.Text = "50";
+            this.txtRandomizeSpeedDown.Enabled = false;
+            this.txtRandomizeSpeedDown.Location = new System.Drawing.Point(78, 47);
+            this.txtRandomizeSpeedDown.Name = "txtRandomizeSpeedDown";
+            this.txtRandomizeSpeedDown.Size = new System.Drawing.Size(67, 21);
+            this.txtRandomizeSpeedDown.TabIndex = 3;
+            this.txtRandomizeSpeedDown.Text = "50";
             // 
             // label8
             // 
@@ -379,23 +401,23 @@
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseClick);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseMove);
             // 
-            // label12
+            // txtRandomizeSpeedUp
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(10, 185);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(53, 12);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Interval";
+            this.txtRandomizeSpeedUp.Enabled = false;
+            this.txtRandomizeSpeedUp.Location = new System.Drawing.Point(208, 47);
+            this.txtRandomizeSpeedUp.Name = "txtRandomizeSpeedUp";
+            this.txtRandomizeSpeedUp.Size = new System.Drawing.Size(68, 21);
+            this.txtRandomizeSpeedUp.TabIndex = 14;
+            this.txtRandomizeSpeedUp.Text = "100";
             // 
-            // txtInterval
+            // label13
             // 
-            this.txtInterval.Enabled = false;
-            this.txtInterval.Location = new System.Drawing.Point(78, 182);
-            this.txtInterval.Name = "txtInterval";
-            this.txtInterval.Size = new System.Drawing.Size(198, 21);
-            this.txtInterval.TabIndex = 13;
-            this.txtInterval.Text = "10";
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(169, 50);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(11, 12);
+            this.label13.TabIndex = 15;
+            this.label13.Text = "-";
             // 
             // frmMain
             // 
@@ -441,7 +463,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtRandomizeAngleDown;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox txtRandomizeSpeed;
+        private System.Windows.Forms.TextBox txtRandomizeSpeedDown;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtRandomizeGravity;
         private System.Windows.Forms.TextBox txtRandomizeAngleUp;
@@ -454,6 +476,8 @@
         private System.Windows.Forms.RadioButton rbRandomize;
         private System.Windows.Forms.TextBox txtInterval;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txtRandomizeSpeedUp;
+        private System.Windows.Forms.Label label13;
     }
 }
 

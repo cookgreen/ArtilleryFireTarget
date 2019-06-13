@@ -94,7 +94,8 @@ namespace BallisticSimulator
                     }
                     double angleDown = double.Parse(txtRandomizeAngleDown.Text);
                     double angleUp = double.Parse(txtRandomizeAngleUp.Text);
-                    double speed = double.Parse(txtRandomizeSpeed.Text);
+                    double speedDown = double.Parse(txtRandomizeSpeedDown.Text);
+                    double speedUp = double.Parse(txtRandomizeSpeedUp.Text);
                     double gravity = double.Parse(txtRandomizeGravity.Text);
                     double duration = double.Parse(txtDura.Text);
                     int interval = int.Parse(txtInterval.Text);
@@ -106,7 +107,8 @@ namespace BallisticSimulator
                         for (int j = 0; j < amount; j++)
                         {
                             int randAngle = rand.Next((int)angleDown, (int)angleUp);
-                            frame.Item2.Add(new BallisticExpression(speed, gravity, randAngle, new Point(e.X, e.Y)));
+                            int randSpeed = rand.Next((int)speedDown, (int)speedUp);
+                            frame.Item2.Add(new BallisticExpression(randSpeed, gravity, randAngle, new Point(e.X, e.Y)));
                         }
                         ballisticTimeLine.Enqueue(frame);
                     }
@@ -127,7 +129,8 @@ namespace BallisticSimulator
             txtRandomizeAngleUp.Enabled = true;
             txtAmount.Enabled = true;
             txtRandomizeGravity.Enabled = true;
-            txtRandomizeSpeed.Enabled = true;
+            txtRandomizeSpeedDown.Enabled = true;
+            txtRandomizeSpeedUp.Enabled = true;
             txtDura.Enabled = true;
             txtInterval.Enabled = true;
 
@@ -143,7 +146,8 @@ namespace BallisticSimulator
             txtRandomizeAngleUp.Enabled = false;
             txtAmount.Enabled = false;
             txtRandomizeGravity.Enabled = false;
-            txtRandomizeSpeed.Enabled = false;
+            txtRandomizeSpeedDown.Enabled = false;
+            txtRandomizeSpeedUp.Enabled = false;
             txtDura.Enabled = false;
             txtInterval.Enabled = false;
 
