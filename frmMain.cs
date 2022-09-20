@@ -1,58 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
-namespace BallisticSimulator
+namespace ArtilleryFire
 {
     public partial class frmMain : Form
     {
-        public enum SimulatorMode
-        {
-            Fixed,
-            Randomize
-        }
-        int time;
-        Timer timer;
-        SimulatorMode mode;
-        Random rand;
-        List<BallisticExpression> be;
-        Queue<Tuple<int, List<BallisticExpression>>> ballisticTimeLine;
+        private Bitmap? target;
+        private Bitmap? cannonBall;
+        private Bitmap? cannonMozzle;
+        private Bitmap? cannonBarrel;
+        private Bitmap? cannonPlatformWheel;
+        private Point cannonPlatformWheelRotationCenterOffset = new Point(550, 504);
+        private float currentBarrelRotationAngle;
+        private List<BalisticMovement> be;
+        private int newW, newH = 0;
+        private Queue<Tuple<int, List<BalisticMovement>>> ballisticTimeLine;
+        private int time = 0;
+
         public frmMain()
         {
             InitializeComponent();
 
-            time = 0;
-            be = new List<BallisticExpression>();
-            timer = new Timer();
-            timer.Interval = 100;
-            timer.Tick += Timer_Tick;
-            timer.Start();
-            mode = SimulatorMode.Fixed;
-            rand = new Random();
-            ballisticTimeLine = new Queue<Tuple<int, List<BallisticExpression>>>();
+            be = new List<BalisticMovement>();
+            ballisticTimeLine = new Queue<Tuple<int, List<BalisticMovement>>>();
+
+            canvas.MouseWheel += Canvas_MouseWheel;
+
+            timer1.Interval = 100;
+            timer1.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Canvas_MouseWheel(object? sender, MouseEventArgs e)
         {
-            canvas.Invalidate();
+            if(e.Delta > 0)
+            {
+                currentBarrelRotationAngle -= 2;
+            }
+            else
+            {
+                currentBarrelRotationAngle += 2;
+            }
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            target = new Bitmap(Path.Combine(Environment.CurrentDirectory, "Images\\target.png"));
+            cannonBall = new Bitmap(Path.Combine(Environment.CurrentDirectory, "Images\\cannon_ball.png"));
+            cannonBarrel = new Bitmap(Path.Combine(Environment.CurrentDirectory, "Images\\cannon_barrel.png"));
+            cannonMozzle = new Bitmap(Path.Combine(Environment.CurrentDirectory, "Images\\cannon_fire_mozzle.png"));
+            cannonPlatformWheel = new Bitmap(Path.Combine(Environment.CurrentDirectory, "Images\\canon_platform_wheel.png"));
+            btnFire.Enabled = true;
+        }
+
+        private void btnFire_Click(object sender, EventArgs e)
+        {
+            if (cannonBall == null)
+            {
+                return;
+            }
+
+            BalisticMovement movement = new BalisticMovement(
+                cannonBall, 
+                int.Parse(txtSpeed.Text), 
+                9.8f, 
+                currentBarrelRotationAngle * -1, 
+                new Point(
+                    10 + 100, 
+                    500), 
+                0.05f);
+            be.Add(movement);
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.Clear(Color.White);
+            Graphics g = e.Graphics;
 
-            Tuple<int, List<BallisticExpression>> currentFrame = null;
+            if (target != null)
+            {
+                g.DrawImage(target, 800, 400, target.Width * 0.2f, target.Height * 0.2f);
+            }
+
             if (ballisticTimeLine.Count > 0)
             {
                 if (time == ballisticTimeLine.Peek().Item1)
                 {
-                    currentFrame = ballisticTimeLine.Dequeue();
+                    var currentFrame = ballisticTimeLine.Dequeue();
                     be.AddRange(currentFrame.Item2);
                 }
                 time++;
@@ -61,99 +92,62 @@ namespace BallisticSimulator
             {
                 time = 0;
             }
-            
+
             for (int i = 0; i < be.Count; i++)
             {
                 be[i].Draw(e.Graphics);
-                be[i].Update();
                 e.Graphics.Flush();
             }
-        }
 
-        private void canvas_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+            if (cannonBarrel != null)
             {
-                if (mode == SimulatorMode.Fixed)
-                {
-                    double angle = double.Parse(txtAngle.Text);
-                    double gravity = double.Parse(txtGravity.Text);
-                    double speed = double.Parse(txtSpeed.Text);
-                    
-                    Tuple<int, List<BallisticExpression>> frame = new Tuple<int, List<BallisticExpression>>(
-                        0, new List<BallisticExpression>());
-                    frame.Item2.Add(new BallisticExpression(speed, gravity, angle, new Point(e.X, e.Y)));
-                    ballisticTimeLine.Enqueue(frame);
-                }
-                else if (mode == SimulatorMode.Randomize)
-                {
-                    int amount = int.Parse(txtAmount.Text);
-                    if (amount <= 0)
-                    {
-                        return;
-                    }
-                    double angleDown = double.Parse(txtRandomizeAngleDown.Text);
-                    double angleUp = double.Parse(txtRandomizeAngleUp.Text);
-                    double speedDown = double.Parse(txtRandomizeSpeedDown.Text);
-                    double speedUp = double.Parse(txtRandomizeSpeedUp.Text);
-                    double gravity = double.Parse(txtRandomizeGravity.Text);
-                    double duration = double.Parse(txtDura.Text);
-                    int interval = int.Parse(txtInterval.Text);
+                Bitmap cannonBarrelRotated = RotateImg(cannonBarrel, currentBarrelRotationAngle, out newW, out newH);
+                g.DrawImage(cannonBarrelRotated, 15, 400, cannonBarrel.Width * 0.3f, cannonBarrel.Height * 0.3f);
+            }
 
-                    for (int i = 0; i < duration; i++)
-                    {
-                        Tuple<int, List<BallisticExpression>> frame = new Tuple<int, List<BallisticExpression>>(
-                            i * interval , new List<BallisticExpression>());
-                        for (int j = 0; j < amount; j++)
-                        {
-                            int randAngle = rand.Next((int)angleDown, (int)angleUp);
-                            int randSpeed = rand.Next((int)speedDown, (int)speedUp);
-                            frame.Item2.Add(new BallisticExpression(randSpeed, gravity, randAngle, new Point(e.X, e.Y)));
-                        }
-                        ballisticTimeLine.Enqueue(frame);
-                    }
-                }
+            if (cannonPlatformWheel != null)
+            {
+                g.DrawImage(cannonPlatformWheel, 0, 400, cannonPlatformWheel.Width * 0.3f, cannonPlatformWheel.Height * 0.3f);
             }
         }
 
-        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            lbMouseX.Text = e.X.ToString();
-            lbMouseY.Text = e.Y.ToString();
+            canvas.Invalidate();
         }
 
-        private void rbRandomize_CheckedChanged(object sender, EventArgs e)
+        public Bitmap RotateImg(Image b, float angle, out int W, out int H)
         {
-            mode = SimulatorMode.Randomize;
-            txtRandomizeAngleDown.Enabled = true;
-            txtRandomizeAngleUp.Enabled = true;
-            txtAmount.Enabled = true;
-            txtRandomizeGravity.Enabled = true;
-            txtRandomizeSpeedDown.Enabled = true;
-            txtRandomizeSpeedUp.Enabled = true;
-            txtDura.Enabled = true;
-            txtInterval.Enabled = true;
-
-            txtAngle.Enabled = false;
-            txtGravity.Enabled = false;
-            txtSpeed.Enabled = false;
-        }
-
-        private void rbFixedValue_CheckedChanged(object sender, EventArgs e)
-        {
-            mode = SimulatorMode.Fixed;
-            txtRandomizeAngleDown.Enabled = false;
-            txtRandomizeAngleUp.Enabled = false;
-            txtAmount.Enabled = false;
-            txtRandomizeGravity.Enabled = false;
-            txtRandomizeSpeedDown.Enabled = false;
-            txtRandomizeSpeedUp.Enabled = false;
-            txtDura.Enabled = false;
-            txtInterval.Enabled = false;
-
-            txtAngle.Enabled = true;
-            txtGravity.Enabled = true;
-            txtSpeed.Enabled = true;
+            angle = angle % 360;
+            
+            double radian = angle * Math.PI / 180.0;
+            double cos = Math.Cos(radian);
+            double sin = Math.Sin(radian);
+             
+            int w = b.Width;
+            int h = b.Height;
+            W = (int)(Math.Max(Math.Abs(w * cos - h * sin), Math.Abs(w * cos + h * sin)));
+            H = (int)(Math.Max(Math.Abs(w * sin - h * cos), Math.Abs(w * sin + h * cos)));
+            
+            Bitmap dsImage = new Bitmap(W, H);
+            Graphics g = Graphics.FromImage(dsImage);
+            g.InterpolationMode = InterpolationMode.Bicubic;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+             
+            Point Offset = new Point((W - w) / 2, (H - h) / 2);
+             
+            Rectangle rect = new Rectangle(Offset.X, Offset.Y, w, h);
+            Point center = new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+            g.TranslateTransform(center.X, center.Y);
+            g.RotateTransform(angle);
+            
+            g.TranslateTransform(-center.X, -center.Y);
+            g.DrawImage(b, rect);
+            
+            g.ResetTransform();
+            g.Save();
+            g.Dispose();
+            return dsImage;
         }
     }
 }
